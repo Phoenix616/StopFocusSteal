@@ -41,7 +41,19 @@ if(FileExist(name . ".ini")) {
     IniRead , inputOnly, %name%.ini, Settings, inputonly, true
     IniRead , preventInput, %name%.ini, Settings, preventinput, 1000
 } else {
-    FileAppend , [Settings]`nfilelog=false`nnotifications=true`ninputonly=true`npreventinput=1000, %name%.ini
+    settings = 
+    (
+[Settings]
+filelog=%logToFile%
+; Log everything to file
+notifications=%showTrayTip%
+; Show tray tip when steal was blocked
+inputonly=%inputOnly%
+; Only stop stealing when keyboard typing is detected
+preventinput=%preventInput%
+; Number of milliseconds in which we should prevent input in newly created windows
+    )
+    FileAppend , %settings%, %name%.ini
 }
 
 logToFile := logToFile && logToFile != "false"
