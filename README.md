@@ -1,5 +1,5 @@
 # StopFocusSteal
-Really simple AutoHotKey script to stop unwanted focus steal under Windows to prevent accidental input into windows while typing. 
+Really simple AutoHotKey script to stop unanted focus steal under Windows to prevent accidental input into newly created (popup) windows while typing or just the automatic moving into the front in general for example when a game/program needs time to load. 
 
 Why AutoHotkey you might ask. Well I'm familiar with using keyboard stuff under windows with it and it was the fastest thing for me to get up and running.
 
