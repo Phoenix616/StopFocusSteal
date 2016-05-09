@@ -29,9 +29,9 @@ global logToFile := false ; Log everything to file
 global showTrayTip := true ; Show tray tip when steal was blocked
 global inputOnly := true ; Only stop stealing when keyboard typing is detected
 
-global inStartMenu := false ; Whether or not the user is in the start menu
-global inLaunchy := false ; Whether or not the user is in launchy
-global modifier := false ; Whether or not the last input was a modifier key without real input
+global inStartMenu := 0 ; The last time the user pressed enter in the start menu
+global inLaunchy := 0 ; The last time the user pressed enter in launchy
+global modifier := 0 ; The last time a modifier key was used which probably wasn't real input but a shortcut
 
 global preventInput := 1000 ; Number of milliseconds in which we should prevent input in newly created windows
 
@@ -84,8 +84,8 @@ ShellMessage(wParam, lParam) {
         lastNewWindow := A_TickCount
         if(StopStealing(lParam)) {
             DllCall("FlashWindow", UInt, lParam , Int, 1)
-            msg .= " <<< Stealing stopped! (Debug: " . A_TimeIdlePhysical . " " . inStartMenu . " " . inLaunchy . " " . modifier . ")"
-            ShowTip("Stopped Focus Steal", "Thief: " . Title . " (" . A_TimeIdlePhysical . " " . inStartMenu . " " . inLaunchy . " " . modifier . ")")
+            msg .= " <<< Stealing stopped! (Debug: " . A_TimeIdlePhysical . " " . A_TickCount - inStartMenu . " " . A_TickCount - inLaunchy . " " . A_TickCount - modifier . ")"
+            ShowTip("Stopped Focus Steal", "Thief: " . Title . " (" . A_TimeIdlePhysical . " " . A_TickCount - inStartMenu . " " . A_TickCount - inLaunchy . " " . A_TickCount - modifier . ")")
         } else {            
             ;ShowTip("Not stopping window Focus Steal", "Thief: " . Title . " (" . lParam . ") " . current . " " . A_TimeIdlePhysical)
         }
@@ -100,11 +100,6 @@ ShellMessage(wParam, lParam) {
             msg .= " <<< Set current (previous: " . previous . ", current: " . current . ")"
         }
     }
-    
-    ; reset all state vars as they don't matter anymore after the first window changed
-    inLaunchy := false
-    inStartMenu := false
-    modifier := false
     
     ; log it if it's enabled, useful for debugging stuff
     FileLog(msg)
@@ -127,7 +122,7 @@ FileLog(text) {
 
 StopStealing(id) {
     if(inputOnly)
-        if(A_TimeIdlePhysical > 2000 || inLaunchy || inStartMenu || modifier)
+        if(A_TimeIdlePhysical > 2000 || A_TickCount - inLaunchy < 100 || A_TickCount - inStartMenu < 100 || A_TickCount - modifier < 100)
             return false
             
     if(current > 0 && current != id) {
@@ -152,10 +147,10 @@ LogCurrent(id){
 $Enter::
     IfWinActive, ahk_class DV2ControlHost
         IfWinActive, ahk_exe explorer.exe
-            inStartMenu := true
+            inStartMenu := A_TickCount
     IfWinActive, ahk_class QTool 
         IfWinActive, ahk_exe Launchy.exe
-            inLaunchy := true
+            inLaunchy := A_TickCount
     if(lastNewWindow + preventInput < A_TickCount)
         SendInput {Enter}
     return
@@ -169,9 +164,10 @@ $Esc::
         SendInput {Esc}
     return
 
-~+::
-~!::
-~#::
-~^::
-    modifier := true
+~RWin::
+~LWin::
+~Shift::
+~Alt::
+~Ctrl::
+    modifier := A_TickCount
     return
