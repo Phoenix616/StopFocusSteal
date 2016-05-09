@@ -122,7 +122,7 @@ FileLog(text) {
 
 StopStealing(id) {
     if(inputOnly)
-        if(A_TimeIdlePhysical > 2000 || A_TickCount - inLaunchy < 100 || A_TickCount - inStartMenu < 100 || A_TickCount - modifier < 100)
+        if(A_TimeIdlePhysical > 2000 || A_TickCount - inLaunchy < 1000 || A_TickCount - inStartMenu < 1000 || A_TickCount - modifier < 1000)
             return false
             
     if(current > 0 && current != id) {
