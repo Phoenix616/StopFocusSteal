@@ -84,8 +84,8 @@ ShellMessage(wParam, lParam) {
         lastNewWindow := A_TickCount
         if(StopStealing(lParam)) {
             DllCall("FlashWindow", UInt, lParam , Int, 1)
-            msg .= " <<< Stealing stopped! (Debug: " . A_TimeIdlePhysical . " " . inStartMenu . " " . inLaunchy . " " . ctrlClick . ")"
-            ShowTip("Stopped Focus Steal", "Thief: " . Title . " (" . A_TimeIdlePhysical . " " . inStartMenu . " " . inLaunchy . " " . ctrlClick . ")")
+            msg .= " <<< Stealing stopped! (Debug: " . A_TimeIdlePhysical . " " . inStartMenu . " " . inLaunchy . " " . modifier . ")"
+            ShowTip("Stopped Focus Steal", "Thief: " . Title . " (" . A_TimeIdlePhysical . " " . inStartMenu . " " . inLaunchy . " " . modifier . ")")
         } else {            
             ;ShowTip("Not stopping window Focus Steal", "Thief: " . Title . " (" . lParam . ") " . current . " " . A_TimeIdlePhysical)
         }
