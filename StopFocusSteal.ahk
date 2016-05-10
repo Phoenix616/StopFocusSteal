@@ -156,10 +156,6 @@ $Enter::
     return
 
 $Esc::
-    if(inLaunchy || inStartMenu) {
-        inLaunchy := false
-        inStartMenu := false
-    }
     if(lastNewWindow + preventInput < A_TickCount)
         SendInput {Esc}
     return
